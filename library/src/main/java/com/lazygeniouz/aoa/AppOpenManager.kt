@@ -50,12 +50,13 @@ class AppOpenManager @JvmOverloads constructor(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private fun onStart() {
         if (initialDelay != InitialDelay.NONE) saveInitialDelayTime()
+        if (isPaused) return
         showAdIfAvailable()
     }
 
     // Let's fetch the Ad
     private fun fetchAd() {
-        if (isAdAvailable()) return
+        if (isAdAvailable() || isPaused) return
         loadAd()
         logDebug("A pre-cached Ad was not available, loading one.")
     }
@@ -129,5 +130,16 @@ class AppOpenManager @JvmOverloads constructor(
                 isShowingAd = true
             }
         }
+    }
+
+    // If true, no ads are shown or loaded.
+    var isPaused = false
+
+    fun pause() {
+        isPaused = true
+    }
+
+    fun resume() {
+        isPaused = false
     }
 }
